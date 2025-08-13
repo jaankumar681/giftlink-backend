@@ -1,10 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Giftlink Backend</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giftlink - All Gifts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #gift-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gift-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 200px;
+        }
+        .gift-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .gift-card h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
+        }
+    </style>
 </head>
-<body style="text-align:center; font-family:Arial; margin-top:50px;">
-  <h1>Welcome to Giftlink Backend</h1>
-  <p>Deployment successful with HTML file!</p>
+<body>
+    <h1>🎁 Giftlink - All Gifts</h1>
+    <p>Browse the gifts before logging in.</p>
+    <div id="gift-list">Loading gifts...</div>
+
+    <script>
+        async function loadGifts() {
+            try {
+                const res = await fetch('/api/gifts'); // backend endpoint
+                const gifts = await res.json();
+
+                const giftList = document.getElementById('gift-list');
+                giftList.innerHTML = '';
+
+                if (gifts.length === 0) {
+                    giftList.innerHTML = '<p>No gifts available.</p>';
+                    return;
+                }
+
+                gifts.forEach(gift => {
+                    const card = document.createElement('div');
+                    card.className = 'gift-card';
+                    card.innerHTML = `
+                        <img src="${gift.image || 'https://via.placeholder.com/150'}" alt="${gift.name}">
+                        <h3>${gift.name}</h3>
+                        <p>${gift.description || ''}</p>
+                    `;
+                    giftList.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('gift-list').innerHTML = '<p>Error loading gifts.</p>';
+                console.error(error);
+            }
+        }
+
+        loadGifts();
+    </script>
 </body>
 </html>
